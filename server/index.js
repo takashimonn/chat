@@ -4,10 +4,10 @@ import { createServer } from 'node:http'
 import { Server } from 'socket.io'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import cors from 'cors' // Importar el paquete cors
 
 dotenv.config()
 console.log(process.env.MONGO_URI); 
-
 
 const port = process.env.PORT ?? 3000
 const mongoUri = process.env.MONGO_URI // Leer la URI de MongoDB desde .env
@@ -23,13 +23,23 @@ const messageSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 })
 
-
-
 const Message = mongoose.model('Message', messageSchema)
 
 const app = express()
+
+// Usar el middleware de CORS para permitir solicitudes desde ambos orígenes
+app.use(cors({
+    origin: ['http://localhost:3000', 'http://localhost:3001'],  // Permitir ambos orígenes
+    methods: ['GET', 'POST']
+}))
+
 const server = createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+    cors: {
+        origin: ['http://localhost:3000', 'http://localhost:3001'],  // Permitir ambos orígenes
+        methods: ['GET', 'POST']
+    }
+})
 
 io.on('connection', (socket) => {
     console.log('a user has connected!')
