@@ -1,6 +1,6 @@
 // src/components/Chat.js
 import React, { useState, useEffect } from 'react';
-import { sendMessage, listenForMessages } from '../services/socket';
+import { sendMessage, listenForMessages, disconnectSocket } from '../services/socket';
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -8,20 +8,23 @@ const Chat = () => {
 
   // Escuchar mensajes al cargar el componente
   useEffect(() => {
-    listenForMessages((msg) => {
+    // Suscribirse una sola vez
+    const messageListener = (msg) => {
       setMessages((prevMessages) => [...prevMessages, msg]);
-    });
+    };
+
+    listenForMessages(messageListener);
 
     // Cleanup: cuando se desmonta el componente, dejar de escuchar
     return () => {
-      listenForMessages(() => {});
+      disconnectSocket();  // Desuscribirse de los eventos del socket
     };
-  }, []);
+  }, []);  // Dependencias vacías para escuchar solo una vez
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input) {
-      sendMessage(input);
+      sendMessage(input); // Emitir mensaje al backend
       setInput('');
     }
   };

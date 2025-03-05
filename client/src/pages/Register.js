@@ -1,6 +1,7 @@
 // src/pages/Register.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'
 
 const Register = () => {
   const [usuario, setUsuario] = useState('');
@@ -19,7 +20,7 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/auth/register', {
+      const response = await axios('http://localhost:3000/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
