@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [usuario, setUsuario] = useState("");
+  const [contrasena, setContrasena] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -24,11 +24,11 @@ const Login = () => {
       <h2>Iniciar sesión</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Email:</label>
+          <label>Usuario:</label>
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            value={usuario}
+            onChange={(e) => setUsuario(e.target.value)}
             required
           />
         </div>
@@ -36,8 +36,8 @@ const Login = () => {
           <label>Contraseña:</label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={contrasena}
+            onChange={(e) => setContrasena(e.target.value)}
             required
           />
         </div>
