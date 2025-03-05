@@ -87,6 +87,19 @@ io.on('connection', (socket) => {
   });
 });
 
+// Endpoint para obtener los mensajes por materia
+app.get('/messages/:materia', async (req, res) => {
+  const { materia } = req.params;
+  
+  try {
+    const messages = await Message.find({ materia }).sort({ createdAt: 1 }); // Ordenar mensajes por fecha
+    res.json(messages);  // Devolver los mensajes de la materia seleccionada
+  } catch (error) {
+    console.error('Error al obtener los mensajes:', error);
+    res.status(500).json({ error: 'Error al obtener los mensajes' });
+  }
+});
+
 app.get('/', (req, res) => {
   res.sendFile(process.cwd() + '/client/index.html');
 });

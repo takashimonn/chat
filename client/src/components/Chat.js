@@ -1,37 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { io } from 'socket.io-client';
+import { sendMessage, listenForMessages, disconnectSocket } from '../services/socket';
 import '../styles/Chat.css';
 
-const socket = io('http://localhost:3000'); // Conexión con el servidor
-
 const Chat = () => {
-  const [messages, setMessages] = useState([]);  // Para almacenar los mensajes actuales
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [materia, setMateria] = useState('');
   const [error, setError] = useState('');
 
+  // Fetch messages for the selected subject
+  const fetchMessages = async (materia) => {
+    try {
+      const response = await fetch(`http://localhost:3000/messages/${materia}`);
+      const data = await response.json();
+      setMessages(data); // Set the fetched messages
+    } catch (error) {
+      console.error('Error al cargar los mensajes:', error);
+      setError('No se pudieron cargar los mensajes.');
+    }
+  };
+
   useEffect(() => {
     if (materia) {
-      // Limpiar los mensajes cuando se cambia de materia
-      setMessages([]);
-
-      // Escuchar los mensajes de la materia seleccionada
       const messageListener = (msg) => {
         setMessages((prevMessages) => {
-          // Asegurarse de que no se agreguen mensajes duplicados
-          if (!prevMessages.find((message) => message._id === msg._id)) {
+          if (!prevMessages.find(message => message._id === msg._id)) {
             return [...prevMessages, msg];
           }
           return prevMessages;
         });
       };
 
-      socket.emit('join room', materia);  // Unirse a la sala de la materia seleccionada
-      socket.on('chat message', messageListener);
+      listenForMessages(materia, messageListener);
+      fetchMessages(materia); // Fetch the messages when the materia changes
 
-      // Limpiar el listener cuando se cambie de materia
+      // Cleanup when switching subjects
       return () => {
-        socket.off('chat message', messageListener);
+        disconnectSocket();
       };
     }
   }, [materia]);
@@ -41,7 +46,7 @@ const Chat = () => {
     if (input && materia) {
       setError('');
       const message = { text: input, materia };
-      socket.emit('chat message', message); // Emitir mensaje al servidor
+      sendMessage(message);
       setInput('');
     } else {
       setError('Por favor, ingresa un mensaje y selecciona una materia.');
@@ -65,7 +70,6 @@ const Chat = () => {
 
       <div className="chat-box">
         {materia && <h1>Materia: {materia}</h1>}
-
         {error && <p className="error">{error}</p>}
 
         <div className="messages">
