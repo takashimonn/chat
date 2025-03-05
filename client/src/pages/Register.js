@@ -38,59 +38,69 @@ const Register = () => {
   };
 
   return (
-    <div style={styles.registerContainer}>
-      <h1 style={styles.title}>Registro de Usuario</h1>
-      {error && <p style={styles.errorMessage}>{error}</p>}
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.formGroup}>
-          <label htmlFor="usuario" style={styles.label}>Usuario</label>
-          <input
-            type="text"
-            id="usuario"
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
-            required
-            style={styles.input}
-          />
-        </div>
-        <div style={styles.formGroup}>
-          <label htmlFor="contrasena" style={styles.label}>Contraseña</label>
-          <input
-            type="password"
-            id="contrasena"
-            value={contrasena}
-            onChange={(e) => setContrasena(e.target.value)}
-            required
-            style={styles.input}
-          />
-        </div>
-        <div style={styles.formGroup}>
-          <label htmlFor="confirmarContrasena" style={styles.label}>Confirmar Contraseña</label>
-          <input
-            type="password"
-            id="confirmarContrasena"
-            value={confirmarContrasena}
-            onChange={(e) => setConfirmarContrasena(e.target.value)}
-            required
-            style={styles.input}
-          />
-        </div>
-        <button type="submit" style={styles.registerButton}>Registrar</button>
-      </form>
+    <div style={styles.outerContainer}>
+      <div style={styles.registerContainer}>
+        <h1 style={styles.title}>Registro de Usuario</h1>
+        {error && <p style={styles.errorMessage}>{error}</p>}
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <div style={styles.formGroup}>
+            <label htmlFor="usuario" style={styles.label}>Usuario</label>
+            <input
+              type="text"
+              id="usuario"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              required
+              style={styles.input}
+            />
+          </div>
+          <div style={styles.formGroup}>
+            <label htmlFor="contrasena" style={styles.label}>Contraseña</label>
+            <input
+              type="password"
+              id="contrasena"
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
+              required
+              style={styles.input}
+            />
+          </div>
+          <div style={styles.formGroup}>
+            <label htmlFor="confirmarContrasena" style={styles.label}>Confirmar Contraseña</label>
+            <input
+              type="password"
+              id="confirmarContrasena"
+              value={confirmarContrasena}
+              onChange={(e) => setConfirmarContrasena(e.target.value)}
+              required
+              style={styles.input}
+            />
+          </div>
+          <button type="submit" style={styles.registerButton}>Registrar</button>
+        </form>
+      </div>
     </div>
   );
 };
 
 const styles = {
+  outerContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+    background: '#ffffff', // Fondo blanco
+  },
   registerContainer: {
     width: '100%',
     maxWidth: '400px',
-    padding: '40px',
+    padding: '38px', // Ajustado para el borde
     background: '#ffffff',
-    borderRadius: '12px',
-    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+    borderRadius: '15px',
+    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
     textAlign: 'center',
-    margin: '50px auto',
+    margin: 'auto',
+    border: '2rem solid #FFA409', // Borde amarillo
   },
   title: {
     color: '#333',
@@ -109,7 +119,7 @@ const styles = {
   },
   label: {
     display: 'block',
-    fontWeight: '600',
+    fontWeight: '500',
     marginBottom: '10px',
     fontSize: '16px',
     color: '#555',
@@ -127,7 +137,7 @@ const styles = {
   registerButton: {
     width: '100%',
     padding: '16px',
-    background: '#007bff',
+    background: '#2ecc71',
     color: 'white',
     border: 'none',
     borderRadius: '8px',
