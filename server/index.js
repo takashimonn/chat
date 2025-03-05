@@ -20,8 +20,8 @@ mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // Definición del esquema y modelo para los mensajes
 const messageSchema = new mongoose.Schema({
-  text: String,
-  materia: String,  // Añadido el campo para la materia
+  text: { type: String, required: true },  // Asegúrate de que "text" sea requerido
+  materia: { type: String, required: true },  // Asegúrate de que "materia" sea requerido
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -76,11 +76,15 @@ io.on('connection', (socket) => {
       materia: materia // Guarda la materia del mensaje
     });
 
+    console.log('Saving message:', message); // Log para ver qué estamos intentando guardar
+
     try {
       await message.save();  // Guarda el mensaje en la base de datos
+      console.log('Message saved:', message);
       io.to(materia).emit('chat message', { text, materia });  // Emite el mensaje a todos los clientes en la sala de la materia
     } catch (error) {
       console.error('Error al guardar el mensaje:', error);
+      socket.emit('error', 'Error al guardar el mensaje');
     }
   });
 

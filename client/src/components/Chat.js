@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { sendMessage, listenForMessages, disconnectSocket } from '../services/socket';
 import '../styles/Chat.css';
 
@@ -28,7 +28,7 @@ const Chat = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input && materia) {
-      setError('');
+      setError('');  // Limpiar error si los campos son válidos
       // Enviar el mensaje con la materia seleccionada
       sendMessage({ text: input, materia });
       setInput('');
@@ -46,7 +46,7 @@ const Chat = () => {
           <li onClick={() => setMateria('Matemáticas')}>Matemáticas</li>
           <li onClick={() => setMateria('Física')}>Física</li>
           <li onClick={() => setMateria('Química')}>Química</li>
-          <li onClick={() => setMateria('Algebra')}>Álgebra</li>
+          <li onClick={() => setMateria('Álgebra')}>Álgebra</li>
           <li onClick={() => setMateria('Historia')}>Historía</li>
           <li onClick={() => setMateria('Lectura')}>Lectura</li>
           <li onClick={() => setMateria('Informatica')}>Informática</li>
