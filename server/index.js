@@ -88,16 +88,28 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Recuperar el historial de mensajes de una materia
-  socket.on('get messages', async (materia) => {
+  socket.on('chat message', async (msg) => {
+    const { text, materia } = msg;
+  
+    if (!text || !materia) {
+      console.error('Texto o materia faltante');
+      socket.emit('error', 'Texto o materia faltante');
+      return;
+    }
+  
+    const message = new Message({
+      text: text,
+      materia: materia
+    });
+  
     try {
-      const messages = await Message.find({ materia }).sort({ createdAt: 1 });  // Obtener mensajes de la materia
-      socket.emit('messages', messages);  // Emitir los mensajes al cliente
+      await message.save();
+      io.to(materia).emit('chat message', { text, materia });
     } catch (error) {
-      console.error('Error al recuperar mensajes:', error);
-      socket.emit('error', 'Error al recuperar mensajes');
+      console.error('Error al guardar el mensaje:', error);
     }
   });
+  
 });
 
 app.get('/', (req, res) => {

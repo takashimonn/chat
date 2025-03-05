@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import { sendMessage, listenForMessages, disconnectSocket } from '../services/socket';
 import '../styles/Chat.css';
 
@@ -8,17 +8,22 @@ const Chat = () => {
   const [materia, setMateria] = useState('');
   const [error, setError] = useState('');
 
-  // Escuchar mensajes de la materia seleccionada
   useEffect(() => {
     if (materia) {
       const messageListener = (msg) => {
-        setMessages((prevMessages) => [...prevMessages, msg]);
+        // Solo agregar el mensaje si no existe ya
+        setMessages((prevMessages) => {
+          // Verifica si el mensaje ya está en la lista para evitar duplicados
+          if (!prevMessages.find(message => message._id === msg._id)) {
+            return [...prevMessages, msg];
+          }
+          return prevMessages;
+        });
       };
 
-      // Empezar a escuchar los mensajes de la materia seleccionada
       listenForMessages(materia, messageListener);
 
-      // Cleanup: cuando se desmonta el componente, dejar de escuchar
+      // Cleanup: al cambiar de materia, desconectar el socket y limpiar los mensajes anteriores
       return () => {
         disconnectSocket();
       };
@@ -28,9 +33,9 @@ const Chat = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input && materia) {
-      setError('');  // Limpiar error si los campos son válidos
-      // Enviar el mensaje con la materia seleccionada
-      sendMessage({ text: input, materia });
+      setError('');
+      const message = { text: input, materia };
+      sendMessage(message); // Enviar mensaje al servidor
       setInput('');
     } else {
       setError('Por favor, ingresa un mensaje y selecciona una materia.');
@@ -39,7 +44,6 @@ const Chat = () => {
 
   return (
     <div className="chat-container">
-      {/* Menú lateral */}
       <div className="menu-lateral">
         <h2>Materias</h2>
         <ul>
@@ -47,13 +51,12 @@ const Chat = () => {
           <li onClick={() => setMateria('Física')}>Física</li>
           <li onClick={() => setMateria('Química')}>Química</li>
           <li onClick={() => setMateria('Álgebra')}>Álgebra</li>
-          <li onClick={() => setMateria('Historia')}>Historía</li>
+          <li onClick={() => setMateria('Historia')}>Historia</li>
           <li onClick={() => setMateria('Lectura')}>Lectura</li>
-          <li onClick={() => setMateria('Informatica')}>Informática</li>
+          <li onClick={() => setMateria('Informática')}>Informática</li>
         </ul>
       </div>
 
-      {/* Contenedor de chat */}
       <div className="chat-box">
         {materia && <h1>Materia: {materia}</h1>}
 
@@ -62,14 +65,13 @@ const Chat = () => {
         <div className="messages">
           <ul>
             {messages.map((msg, index) => (
-              <li key={index}>
-                <strong>{msg.materia}</strong>: {msg.text}
+              <li key={index} className="message-item">
+                <strong>{msg.materia}:</strong> {msg.text}
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Formulario para enviar mensaje */}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
