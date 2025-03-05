@@ -5,79 +5,74 @@ import '../styles/Chat.css';
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [materia, setMateria] = useState('');  // Estado para la materia seleccionada
-  const [error, setError] = useState('');  // Estado para manejar los errores
+  const [materia, setMateria] = useState('');
+  const [error, setError] = useState('');
 
-  // Escuchar mensajes al cargar el componente
+  // Escuchar mensajes
   useEffect(() => {
-    // Suscribirse a los mensajes entrantes
     const messageListener = (msg) => {
       setMessages((prevMessages) => [...prevMessages, msg]);
     };
 
     listenForMessages(messageListener);
 
-    // Cleanup: cuando se desmonta el componente, dejar de escuchar
     return () => {
-      disconnectSocket();  // Desuscribirse de los eventos del socket
+      disconnectSocket();
     };
-  }, []);  // Dependencias vacías para escuchar solo una vez
+  }, []);
 
-  // Función para manejar el envío de mensajes
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input && materia) {
-      // Enviar el mensaje con la materia seleccionada
-      setError('');  // Limpiar cualquier error anterior
+      setError('');
       sendMessage({ text: input, materia });
-      setInput('');  // Limpiar el input
+      setInput('');
     } else {
-      setError('Por favor, ingresa un mensaje y selecciona una materia.');  // Mostrar error si faltan campos
+      setError('Por favor, ingresa un mensaje y selecciona una materia.');
     }
   };
 
   return (
-    <div>
-      <h1>Chat</h1>
+    <div className="chat-container">
+      {/* Menú lateral */}
+      <div className="menu-lateral">
+        <h2>Materias</h2>
+        <ul>
+          <li onClick={() => setMateria('Matemáticas')}>Matemáticas</li>
+          <li onClick={() => setMateria('Física')}>Física</li>
+          <li onClick={() => setMateria('Química')}>Química</li>
+        </ul>
+      </div>
 
-      {/* Mostrar error si falta información */}
-      {error && <p className="error">{error}</p>}
+      {/* Contenedor de chat */}
+      <div className="chat-box">
+        <h1>Chat - {materia}</h1>
 
-      {/* Formulario para seleccionar materia y escribir mensaje */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="materia">Selecciona una materia:</label>
-          <select
-            id="materia"
-            value={materia}
-            onChange={(e) => setMateria(e.target.value)}
-          >
-            <option value="">Selecciona una materia</option>
-            <option value="Matemáticas">Matemáticas</option>
-            <option value="Física">Física</option>
-            <option value="Química">Química</option>
-          </select>
+        {error && <p className="error">{error}</p>}
+
+        <div className="messages">
+          <ul>
+            {messages.map((msg, index) => (
+              <li key={index}>
+                <strong>{msg.materia}</strong>: {msg.text}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div>
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Escribe tu mensaje"
-          />
-        </div>
-        <button type="submit">Enviar</button>
-      </form>
-
-      {/* Mostrar los mensajes recibidos */}
-      <ul>
-        {messages.map((msg, index) => (
-          <li key={index}>
-            <strong>{msg.materia}</strong>: {msg.text}
-          </li>
-        ))}
-      </ul>
+        {/* Formulario para enviar mensaje */}
+        <form onSubmit={handleSubmit}>
+          <div>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Escribe tu mensaje"
+            />
+          </div>
+          <button type="submit">Enviar</button>
+        </form>
+      </div>
     </div>
   );
 };
