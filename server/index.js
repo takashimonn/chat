@@ -4,20 +4,20 @@ import { createServer } from 'node:http'
 import { Server } from 'socket.io'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import cors from 'cors' // Importar el paquete cors
+import cors from 'cors'
+
+import authRoutes from './routes/auth.js'
 
 dotenv.config()
-console.log(process.env.MONGO_URI); 
 
 const port = process.env.PORT ?? 3000
-const mongoUri = process.env.MONGO_URI // Leer la URI de MongoDB desde .env
+const mongoUri = process.env.MONGO_URI
 
-// Conectar a MongoDB
+
 mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('✅ Connected to MongoDB'))
     .catch(err => console.error('❌ MongoDB connection error:', err))
 
-// Definir el esquema de mensajes
 const messageSchema = new mongoose.Schema({
     text: String,
     createdAt: { type: Date, default: Date.now }
@@ -26,17 +26,21 @@ const messageSchema = new mongoose.Schema({
 const Message = mongoose.model('Message', messageSchema)
 
 const app = express()
-
-// Usar el middleware de CORS para permitir solicitudes desde ambos orígenes
+app.use(express.json()) 
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],  // Permitir ambos orígenes
+    origin: ['http://localhost:3000', 'http://localhost:3001'],
     methods: ['GET', 'POST']
 }))
+
+app.use(logger('dev'))
+
+
+app.use('/auth', authRoutes)
 
 const server = createServer(app)
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:3000', 'http://localhost:3001'],  // Permitir ambos orígenes
+        origin: ['http://localhost:3000', 'http://localhost:3001'],
         methods: ['GET', 'POST']
     }
 })
@@ -49,15 +53,11 @@ io.on('connection', (socket) => {
     })
 
     socket.on('chat message', async (msg) => {
-        // Guardar el mensaje en MongoDB
         const message = new Message({ text: msg })
         await message.save()
-
         io.emit('chat message', msg)
     })
 })
-
-app.use(logger('dev'))
 
 app.get('/', (req, res) => {
     res.sendFile(process.cwd() + '/client/index.html')
