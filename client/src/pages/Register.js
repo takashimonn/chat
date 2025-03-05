@@ -82,7 +82,7 @@ const Register = () => {
     </div>
   );
 };
-
+// Estilos de la pagina de registro
 const styles = {
   outerContainer: {
     display: 'flex',
