@@ -46,6 +46,10 @@ const Chat = () => {
           <li onClick={() => setMateria('Matemáticas')}>Matemáticas</li>
           <li onClick={() => setMateria('Física')}>Física</li>
           <li onClick={() => setMateria('Química')}>Química</li>
+          <li onClick={() => setMateria('Algebra')}>Álgebra</li>
+          <li onClick={() => setMateria('Historia')}>Historía</li>
+          <li onClick={() => setMateria('Lectura')}>Lectura</li>
+          <li onClick={() => setMateria('Informatica')}>Informática</li>
         </ul>
       </div>
 
@@ -67,14 +71,12 @@ const Chat = () => {
 
         {/* Formulario para enviar mensaje */}
         <form onSubmit={handleSubmit}>
-          <div>
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Escribe tu mensaje"
-            />
-          </div>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Escribe tu mensaje"
+          />
           <button type="submit">Enviar</button>
         </form>
       </div>
