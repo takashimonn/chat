@@ -8,23 +8,28 @@ const Chat = () => {
   const [materia, setMateria] = useState('');
   const [error, setError] = useState('');
 
-  // Escuchar mensajes
+  // Escuchar mensajes de la materia seleccionada
   useEffect(() => {
-    const messageListener = (msg) => {
-      setMessages((prevMessages) => [...prevMessages, msg]);
-    };
+    if (materia) {
+      const messageListener = (msg) => {
+        setMessages((prevMessages) => [...prevMessages, msg]);
+      };
 
-    listenForMessages(messageListener);
+      // Empezar a escuchar los mensajes de la materia seleccionada
+      listenForMessages(materia, messageListener);
 
-    return () => {
-      disconnectSocket();
-    };
-  }, []);
+      // Cleanup: cuando se desmonta el componente, dejar de escuchar
+      return () => {
+        disconnectSocket();
+      };
+    }
+  }, [materia]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input && materia) {
       setError('');
+      // Enviar el mensaje con la materia seleccionada
       sendMessage({ text: input, materia });
       setInput('');
     } else {
@@ -46,7 +51,7 @@ const Chat = () => {
 
       {/* Contenedor de chat */}
       <div className="chat-box">
-        <h1>Chat - {materia}</h1>
+        {materia && <h1>Materia: {materia}</h1>}
 
         {error && <p className="error">{error}</p>}
 
