@@ -110,3 +110,16 @@ form button {
 form button:hover {
   background: #27ae60;
 }
+
+.priority {
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.priority.normal {
+  color: green;
+}
+
+.priority.urgente {
+  color: red;
+}

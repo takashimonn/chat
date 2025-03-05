@@ -6,14 +6,14 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [materia, setMateria] = useState('');
+  const [priority, setPriority] = useState('normal');
   const [error, setError] = useState('');
 
-  // Fetch messages for the selected subject
   const fetchMessages = async (materia) => {
     try {
       const response = await fetch(`http://localhost:3000/messages/${materia}`);
       const data = await response.json();
-      setMessages(data); // Set the fetched messages
+      setMessages(data);
     } catch (error) {
       console.error('Error al cargar los mensajes:', error);
       setError('No se pudieron cargar los mensajes.');
@@ -32,9 +32,8 @@ const Chat = () => {
       };
 
       listenForMessages(materia, messageListener);
-      fetchMessages(materia); // Fetch the messages when the materia changes
+      fetchMessages(materia);
 
-      // Cleanup when switching subjects
       return () => {
         disconnectSocket();
       };
@@ -45,7 +44,7 @@ const Chat = () => {
     e.preventDefault();
     if (input && materia) {
       setError('');
-      const message = { text: input, materia };
+      const message = { text: input, materia, priority };
       sendMessage(message);
       setInput('');
     } else {
@@ -76,7 +75,7 @@ const Chat = () => {
           <ul>
             {messages.map((msg, index) => (
               <li key={index} className="message-item">
-                <strong>{msg.materia}:</strong> {msg.text}
+                <strong>{msg.materia}:</strong> {msg.text} <span className={`priority ${msg.priority}`}>{msg.priority}</span>
               </li>
             ))}
           </ul>
@@ -89,6 +88,10 @@ const Chat = () => {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Escribe tu mensaje"
           />
+          <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+            <option value="normal">Normal</option>
+            <option value="urgente">Urgente</option>
+          </select>
           <button type="submit">Enviar</button>
         </form>
       </div>

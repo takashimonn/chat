@@ -1,16 +1,23 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const messageSchema = new mongoose.Schema({
   text: {
     type: String,
-    required: true  // Asegura que 'text' sea obligatorio
+    required: true
   },
   materia: {
     type: String,
-    required: true  // Asegura que 'materia' sea obligatorio
+    required: true
   },
+  priority: {
+    type: String,
+    enum: ['normal', 'urgente'],
+    default: 'normal'
+  }
+}, {
+  timestamps: true
 });
 
 const Message = mongoose.model('messages', messageSchema);
 
-module.exports = Message;
+export default Message;
