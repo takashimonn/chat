@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { sendMessage, listenForMessages, disconnectSocket } from '../services/socket';
+import { io } from 'socket.io-client';
 import '../styles/Chat.css';
 
+const socket = io('http://localhost:3000'); // Conexión con el servidor
+
 const Chat = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]);  // Para almacenar los mensajes actuales
   const [input, setInput] = useState('');
   const [materia, setMateria] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (materia) {
+      // Limpiar los mensajes cuando se cambia de materia
+      setMessages([]);
+
+      // Escuchar los mensajes de la materia seleccionada
       const messageListener = (msg) => {
-        // Solo agregar el mensaje si no existe ya
         setMessages((prevMessages) => {
-          // Verifica si el mensaje ya está en la lista para evitar duplicados
-          if (!prevMessages.find(message => message._id === msg._id)) {
+          // Asegurarse de que no se agreguen mensajes duplicados
+          if (!prevMessages.find((message) => message._id === msg._id)) {
             return [...prevMessages, msg];
           }
           return prevMessages;
         });
       };
 
-      listenForMessages(materia, messageListener);
+      socket.emit('join room', materia);  // Unirse a la sala de la materia seleccionada
+      socket.on('chat message', messageListener);
 
-      // Cleanup: al cambiar de materia, desconectar el socket y limpiar los mensajes anteriores
+      // Limpiar el listener cuando se cambie de materia
       return () => {
-        disconnectSocket();
+        socket.off('chat message', messageListener);
       };
     }
   }, [materia]);
@@ -35,7 +41,7 @@ const Chat = () => {
     if (input && materia) {
       setError('');
       const message = { text: input, materia };
-      sendMessage(message); // Enviar mensaje al servidor
+      socket.emit('chat message', message); // Emitir mensaje al servidor
       setInput('');
     } else {
       setError('Por favor, ingresa un mensaje y selecciona una materia.');

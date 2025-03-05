@@ -20,8 +20,8 @@ mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // Definición del esquema y modelo para los mensajes
 const messageSchema = new mongoose.Schema({
-  text: { type: String, required: true },  // Asegúrate de que "text" sea requerido
-  materia: { type: String, required: true },  // Asegúrate de que "materia" sea requerido
+  text: { type: String, required: true },
+  materia: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -59,57 +59,32 @@ io.on('connection', (socket) => {
     console.log(`User joined the room: ${materia}`);
   });
 
-  // Escuchar el mensaje de chat
+  // Escuchar el mensaje de chat y guardarlo en la base de datos
   socket.on('chat message', async (msg) => {
-    const { text, materia } = msg;  // Desestructuramos el mensaje
+    const { text, materia } = msg;
 
     // Validar que ambos campos estén presentes
     if (!text || !materia) {
       console.error('Texto o materia faltante');
-      socket.emit('error', 'Texto o materia faltante');  // Emite el error al cliente
+      socket.emit('error', 'Texto o materia faltante');  // Emitir el error al cliente
       return;
     }
 
     // Crear un nuevo mensaje con texto y materia
     const message = new Message({
-      text: text,      // Guarda el texto del mensaje
-      materia: materia // Guarda la materia del mensaje
-    });
-
-    console.log('Saving message:', message); // Log para ver qué estamos intentando guardar
-
-    try {
-      await message.save();  // Guarda el mensaje en la base de datos
-      console.log('Message saved:', message);
-      io.to(materia).emit('chat message', { text, materia });  // Emite el mensaje a todos los clientes en la sala de la materia
-    } catch (error) {
-      console.error('Error al guardar el mensaje:', error);
-      socket.emit('error', 'Error al guardar el mensaje');
-    }
-  });
-
-  socket.on('chat message', async (msg) => {
-    const { text, materia } = msg;
-  
-    if (!text || !materia) {
-      console.error('Texto o materia faltante');
-      socket.emit('error', 'Texto o materia faltante');
-      return;
-    }
-  
-    const message = new Message({
       text: text,
       materia: materia
     });
-  
+
     try {
-      await message.save();
-      io.to(materia).emit('chat message', { text, materia });
+      await message.save();  // Guardar el mensaje en la base de datos
+      console.log('Message saved:', message);
+      io.to(materia).emit('chat message', { text, materia });  // Emitir el mensaje a todos los clientes en la sala de la materia
     } catch (error) {
       console.error('Error al guardar el mensaje:', error);
+      socket.emit('error', 'Error al guardar el mensaje');  // Emitir error al cliente si falla la base de datos
     }
   });
-  
 });
 
 app.get('/', (req, res) => {
