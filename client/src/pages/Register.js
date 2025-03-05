@@ -80,7 +80,7 @@ const Register = () => {
     </div>
   );
 };
-
+// Estilos de la pagina de registro
 const styles = {
   registerContainer: {
     width: '100%',
