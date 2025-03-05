@@ -22,9 +22,10 @@ const Chat = () => {
 
   useEffect(() => {
     if (materia) {
+      // Solo desconectamos si realmente estamos dejando la materia y no para cada cambio
       const messageListener = (msg) => {
         setMessages((prevMessages) => {
-          if (!prevMessages.find(message => message._id === msg._id)) {
+          if (!prevMessages.find((message) => message._id === msg._id)) {
             return [...prevMessages, msg];
           }
           return prevMessages;
@@ -35,17 +36,18 @@ const Chat = () => {
       fetchMessages(materia);
 
       return () => {
-        disconnectSocket();
+        // Aquí solo desconectamos si se sale del chat (si fuera necesario)
+        // disconnectSocket(); 
       };
     }
-  }, [materia]);
+  }, [materia]); // Solo se ejecuta cuando cambia `materia`
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input && materia) {
       setError('');
       const message = { text: input, materia, priority };
-      sendMessage(message);
+      sendMessage(message); // Esto debe mantener la comunicación en tiempo real
       setInput('');
     } else {
       setError('Por favor, ingresa un mensaje y selecciona una materia.');
