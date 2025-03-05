@@ -1,9 +1,9 @@
 import express from 'express';
-import { createServer } from 'node:http';
-import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
 import Message from './models/Messages.js';
 
 dotenv.config();
@@ -16,13 +16,22 @@ mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
-
-
 app.use(express.json());
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:3001'],
   methods: ['GET', 'POST']
 }));
+
+// Ruta de autenticación (con prefijo /auth)
+const authRouter = express.Router();
+authRouter.post('/register', (req, res) => {
+  // Aquí va la lógica de registro de usuario
+  console.log('Usuario registrado:', req.body);
+  res.status(201).send({ message: 'Usuario registrado correctamente' });
+});
+
+// Montamos las rutas de autenticación bajo el prefijo /auth
+app.use('/auth', authRouter);
 
 const server = createServer(app);
 const io = new Server(server, {
@@ -34,7 +43,6 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   console.log('A user has connected!');
-
   socket.on('join room', (materia) => {
     socket.join(materia);
     console.log(`User joined the room: ${materia}`);
@@ -42,7 +50,6 @@ io.on('connection', (socket) => {
 
   socket.on('chat message', async (msg) => {
     const { text, materia, priority } = msg;
-
     if (!text || !materia) {
       socket.emit('error', 'Texto o materia faltante');
       return;
@@ -57,7 +64,6 @@ io.on('connection', (socket) => {
     try {
       await message.save();
       console.log('Message saved:', message);
-
       io.to(materia).emit('chat message', message); // Enviar a todos los usuarios en la misma sala
     } catch (error) {
       console.error('Error al guardar el mensaje:', error);

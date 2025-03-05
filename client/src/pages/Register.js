@@ -1,7 +1,6 @@
-// src/pages/Register.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'
+import axios from 'axios';
 
 const Register = () => {
   const [usuario, setUsuario] = useState('');
@@ -20,24 +19,17 @@ const Register = () => {
     }
 
     try {
-      const response = await axios('http://localhost:3000/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          usuario,
-          contrasena,
-        }),
+      // Realizando la solicitud POST al backend
+      const response = await axios.post('http://localhost:3000/auth/register', {
+        usuario,
+        contrasena,
       });
-
-      const data = await response.json();
 
       if (response.status === 201) {
         // Si la respuesta es correcta, redirige a la página de login
         navigate('/login');
       } else {
-        setError(data.message || 'Error al registrar usuario');
+        setError(response.data.message || 'Error al registrar usuario');
       }
     } catch (err) {
       console.error('Error al registrar usuario:', err);
