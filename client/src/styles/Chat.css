@@ -165,9 +165,14 @@ form button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative; 
 }
 
 .urgent-filter-button {
+  position: absolute; 
+  top: 50%;
+  right: 0; 
+  transform: translateY(-150%); 
   background: none;
   border: none;
   cursor: pointer;
