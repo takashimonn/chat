@@ -71,6 +71,9 @@
   border-radius: 5px;
   background: #ecf0f1;
   max-width: 70%;
+  position: relative;
+  display: flex; /* Añadido para alinear los elementos en línea */
+  align-items: center; /* Añadido para alinear verticalmente los elementos */
 }
 
 .messages li.user-message {
@@ -112,8 +115,8 @@ form button:hover {
 }
 
 .priority {
-  font-weight: bold;
-  margin-left: 10px;
+  margin-left: auto; /* Empuja la prioridad a la derecha */
+  margin-right: 20px; /* Agrega un pequeño margen entre el estado y la prioridad */
 }
 
 .priority.normal {
@@ -126,7 +129,7 @@ form button:hover {
 
 .status {
   font-weight: bold;
-  margin-left: 10px;
+  position: relative; /* Asegura que la posición relativa no afecte el flujo */
 }
 
 .status.en_espera {
@@ -134,53 +137,17 @@ form button:hover {
 }
 
 .status.visto {
+  color: orange;
+}
+
+.status.respondido {
+  color: rgb(86, 103, 251);
+}
+
+.priority-normal {
   color: green;
 }
 
-.status.respondido {
-  color: blue;
+.priority-urgente {
+  color: red;
 }
-
-.messages li {
-  padding: 8px;
-  margin-bottom: 5px;
-  border-radius: 5px;
-  background: #ecf0f1;
-  max-width: 70%;
-  position: relative; /* Para posicionar el estado al lado derecho */
-}
-
-.messages li.user-message {
-  background-color: #2ecc71;
-  align-self: flex-end;
-  color: white;
-}
-
-.messages li.other-message {
-  background-color: #ecf0f1;
-  align-self: flex-start;
-  color: black;
-}
-
-.status {
-  font-weight: bold;
-  margin-left: 10px;
-  position: absolute; /* Posicionar el estado a la derecha */
-  right: 10px; /* Ajuste para que esté alineado a la derecha */
-  top: 50%;
-  transform: translateY(-50%); /* Centrar verticalmente */
-}
-
-.status.en_espera {
-  color: orange;
-}
-
-.status.visto {
-  color: rgb(47, 38, 226);
-}
-
-.status.respondido {
-  color: rgb(35, 161, 4);
-}
-
-

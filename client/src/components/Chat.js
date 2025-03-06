@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { sendMessage, listenForMessages, disconnectSocket } from '../services/socket';
 import '../styles/Chat.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFlag, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'; // Importa los iconos
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -80,7 +82,11 @@ const Chat = () => {
             {messages.map((msg, index) => (
               <li key={index} className="message-item">
                 <strong>{msg.materia}:</strong> {msg.text}
-                <span className={`priority ${msg.priority}`}>{msg.priority}</span>
+                {msg.priority === 'normal' ? (
+                  <FontAwesomeIcon icon={faFlag} className="priority priority-normal" />
+                ) : (
+                  <FontAwesomeIcon icon={faExclamationTriangle} className="priority priority-urgente" />
+                )}
                 <span className={`status ${msg.status}`}>{msg.status}</span>
               </li>
             ))}
