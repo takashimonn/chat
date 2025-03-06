@@ -123,3 +123,21 @@ form button:hover {
 .priority.urgente {
   color: red;
 }
+
+.status {
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.status.en_espera {
+  color: orange;
+}
+
+.status.visto {
+  color: green;
+}
+
+.status.respondido {
+  color: blue;
+}
+

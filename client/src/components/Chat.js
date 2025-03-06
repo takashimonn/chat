@@ -22,13 +22,15 @@ const Chat = () => {
 
   useEffect(() => {
     if (materia) {
-      // Solo desconectamos si realmente estamos dejando la materia y no para cada cambio
       const messageListener = (msg) => {
         setMessages((prevMessages) => {
-          if (!prevMessages.find((message) => message._id === msg._id)) {
-            return [...prevMessages, msg];
+          const updatedMessages = prevMessages.map((message) =>
+            message._id === msg._id ? msg : message
+          );
+          if (!updatedMessages.find((message) => message._id === msg._id)) {
+            updatedMessages.push(msg);
           }
-          return prevMessages;
+          return updatedMessages;
         });
       };
 
@@ -36,18 +38,18 @@ const Chat = () => {
       fetchMessages(materia);
 
       return () => {
-        // Aquí solo desconectamos si se sale del chat (si fuera necesario)
-        // disconnectSocket(); 
+        disconnectSocket();
       };
     }
-  }, [materia]); // Solo se ejecuta cuando cambia `materia`
+  }, [materia]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input && materia) {
       setError('');
+
       const message = { text: input, materia, priority };
-      sendMessage(message); // Esto debe mantener la comunicación en tiempo real
+      sendMessage(message);
       setInput('');
     } else {
       setError('Por favor, ingresa un mensaje y selecciona una materia.');
@@ -77,7 +79,9 @@ const Chat = () => {
           <ul>
             {messages.map((msg, index) => (
               <li key={index} className="message-item">
-                <strong>{msg.materia}:</strong> {msg.text} <span className={`priority ${msg.priority}`}>{msg.priority}</span>
+                <strong>{msg.materia}:</strong> {msg.text}
+                <span className={`priority ${msg.priority}`}>{msg.priority}</span>
+                <span className={`status ${msg.status}`}>{msg.status}</span>
               </li>
             ))}
           </ul>

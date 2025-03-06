@@ -13,6 +13,11 @@ const messageSchema = new mongoose.Schema({
     type: String,
     enum: ['normal', 'urgente'],
     default: 'normal'
+  },
+  status: {
+    type: String,
+    enum: ['en espera', 'visto', 'respondido'],
+    default: 'en espera'
   }
 }, {
   timestamps: true
