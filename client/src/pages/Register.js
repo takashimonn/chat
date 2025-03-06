@@ -1,32 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Register = () => {
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [confirmarContrasena, setConfirmarContrasena] = useState('');
   const [error, setError] = useState('');
+  const [captchaValido, setCaptchaValido] = useState(false);
+  const [errorCaptcha, setErrorCaptcha] = useState(false);
   const navigate = useNavigate();
+  const captcha = useRef(null);
+
+  const onChange = () => {
+    if (captcha.current.getValue()) {
+      setCaptchaValido(true);
+      setErrorCaptcha(false); // Ocultar el mensaje de error si el usuario verifica el captcha
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación simple de contraseñas
+    if (!captchaValido) {
+      setErrorCaptcha(true);
+      return; // Evita el envío del formulario
+    }
+
     if (contrasena !== confirmarContrasena) {
       setError('Las contraseñas no coinciden');
       return;
     }
 
     try {
-      // Realizando la solicitud POST al backend
       const response = await axios.post('http://localhost:3000/auth/register', {
         usuario,
         contrasena,
       });
 
       if (response.status === 201) {
-        // Si la respuesta es correcta, redirige a la página de login
         navigate('/login');
       } else {
         setError(response.data.message || 'Error al registrar usuario');
@@ -76,31 +89,40 @@ const Register = () => {
               style={styles.input}
             />
           </div>
+          <div style={{ marginBottom: "15px", textAlign: "center" }}>
+            <ReCAPTCHA
+              ref={captcha}
+              sitekey="6Lcxz-oqAAAAAPE6YrVlAKSP7ueo2fjKGYgxSFDw"
+              onChange={onChange}
+            />
+          </div>
+          {errorCaptcha && <p style={{ color: "red", textAlign: "center" }}>Por favor, verifica el reCAPTCHA</p>}
           <button type="submit" style={styles.registerButton}>Registrar</button>
         </form>
       </div>
     </div>
   );
 };
-// Estilos de la pagina de registro
+
+// Estilos de la página de registro
 const styles = {
   outerContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
-    background: '#ffffff', // Fondo blanco
+    background: '#ffffff',
   },
   registerContainer: {
     width: '100%',
     maxWidth: '400px',
-    padding: '38px', // Ajustado para el borde
+    padding: '38px',
     background: '#ffffff',
     borderRadius: '15px',
     boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
     textAlign: 'center',
     margin: 'auto',
-    border: '2rem solid #FFA409', // Borde amarillo
+    border: '2rem solid #FFA409',
   },
   title: {
     color: '#333',
@@ -161,3 +183,4 @@ const styles = {
 };
 
 export default Register;
+
