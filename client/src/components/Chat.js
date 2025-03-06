@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { sendMessage, listenForMessages, disconnectSocket } from '../services/socket';
 import '../styles/Chat.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFlag, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'; // Importa los iconos
+import { faFlag, faExclamationTriangle, faFilter } from '@fortawesome/free-solid-svg-icons';
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -10,6 +10,7 @@ const Chat = () => {
   const [materia, setMateria] = useState('');
   const [priority, setPriority] = useState('normal');
   const [error, setError] = useState('');
+  const [showUrgentModal, setShowUrgentModal] = useState(false);
 
   const fetchMessages = async (materia) => {
     try {
@@ -74,7 +75,12 @@ const Chat = () => {
       </div>
 
       <div className="chat-box">
-        {materia && <h1>Materia: {materia}</h1>}
+        <div className="chat-header">
+          {materia && <h1>Materia: {materia}</h1>}
+          <button className="urgent-filter-button" onClick={() => setShowUrgentModal(true)}>
+            <FontAwesomeIcon icon={faFilter} />
+          </button>
+        </div>
         {error && <p className="error">{error}</p>}
 
         <div className="messages">
@@ -82,11 +88,13 @@ const Chat = () => {
             {messages.map((msg, index) => (
               <li key={index} className="message-item">
                 <strong>{msg.materia}:</strong> {msg.text}
-                {msg.priority === 'normal' ? (
-                  <FontAwesomeIcon icon={faFlag} className="priority priority-normal" />
-                ) : (
-                  <FontAwesomeIcon icon={faExclamationTriangle} className="priority priority-urgente" />
-                )}
+                <div className="priority-container">
+                  {msg.priority === 'normal' ? (
+                    <FontAwesomeIcon icon={faFlag} className="priority priority-normal" />
+                  ) : (
+                    <FontAwesomeIcon icon={faExclamationTriangle} className="priority priority-urgente" />
+                  )}
+                </div>
                 <span className={`status ${msg.status}`}>{msg.status}</span>
               </li>
             ))}
@@ -106,6 +114,29 @@ const Chat = () => {
           </select>
           <button type="submit">Enviar</button>
         </form>
+
+        {showUrgentModal && (
+          <div className="urgent-modal">
+            <div className="urgent-modal-content">
+              <button className="close-modal" onClick={() => setShowUrgentModal(false)}>
+                Cerrar
+              </button>
+              <h2>Mensajes Urgentes</h2>
+              <ul>
+                {messages
+                  .filter((msg) => msg.priority === 'urgente')
+                  .map((msg, index) => (
+                    <li key={index} className="message-item">
+                      <strong>{msg.materia}:</strong> {msg.text}
+                      <div className="priority-container">
+                        <FontAwesomeIcon icon={faExclamationTriangle} className="priority priority-urgente" />
+                      </div>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

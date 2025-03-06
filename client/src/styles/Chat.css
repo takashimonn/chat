@@ -72,20 +72,23 @@
   background: #ecf0f1;
   max-width: 70%;
   position: relative;
-  display: flex; /* Añadido para alinear los elementos en línea */
-  align-items: center; /* Añadido para alinear verticalmente los elementos */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .messages li.user-message {
   background-color: #2ecc71;
   align-self: flex-end;
   color: white;
+  justify-content: flex-start; /* Alineación del mensaje a la izquierda */
 }
 
 .messages li.other-message {
   background-color: #ecf0f1;
   align-self: flex-start;
   color: black;
+  justify-content: flex-start; /* Alineación del mensaje a la izquierda */
 }
 
 form {
@@ -114,9 +117,15 @@ form button:hover {
   background: #27ae60;
 }
 
+.priority-container {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Alineación de la prioridad a la derecha */
+}
+
 .priority {
-  margin-left: auto; /* Empuja la prioridad a la derecha */
-  margin-right: 20px; /* Agrega un pequeño margen entre el estado y la prioridad */
+  margin-left: 10px;
+  margin-right: 20px;
 }
 
 .priority.normal {
@@ -129,7 +138,7 @@ form button:hover {
 
 .status {
   font-weight: bold;
-  position: relative; /* Asegura que la posición relativa no afecte el flujo */
+  position: relative;
 }
 
 .status.en_espera {
@@ -150,4 +159,55 @@ form button:hover {
 
 .priority-urgente {
   color: red;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.urgent-filter-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.urgent-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.urgent-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.urgent-modal-content ul li {  /* Nueva regla para los elementos de la lista dentro de la modal */
+  display: flex;
+  justify-content: flex-end;  /* Alinea los iconos a la derecha */
+  align-items: center;
 }
