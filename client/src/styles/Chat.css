@@ -141,3 +141,46 @@ form button:hover {
   color: blue;
 }
 
+.messages li {
+  padding: 8px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  background: #ecf0f1;
+  max-width: 70%;
+  position: relative; /* Para posicionar el estado al lado derecho */
+}
+
+.messages li.user-message {
+  background-color: #2ecc71;
+  align-self: flex-end;
+  color: white;
+}
+
+.messages li.other-message {
+  background-color: #ecf0f1;
+  align-self: flex-start;
+  color: black;
+}
+
+.status {
+  font-weight: bold;
+  margin-left: 10px;
+  position: absolute; /* Posicionar el estado a la derecha */
+  right: 10px; /* Ajuste para que esté alineado a la derecha */
+  top: 50%;
+  transform: translateY(-50%); /* Centrar verticalmente */
+}
+
+.status.en_espera {
+  color: orange;
+}
+
+.status.visto {
+  color: rgb(47, 38, 226);
+}
+
+.status.respondido {
+  color: rgb(35, 161, 4);
+}
+
+
